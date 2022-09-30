@@ -3,6 +3,15 @@ const router = require("express").Router();
 const UserModel = require("../modules/userModel");
 const map_user_req = require("../../helpers/map_user_req");
 const passwordHash = require("password-hash");
+const JWT = require('jsonwebtoken')
+const config = require('../configs/index')
+
+function generateToken(data) {
+    const token = JWT.sign({
+        _id: data._id,
+    },config.JWT_SECRET)
+    return token
+}
 
 router.get("/", (req, res, next) => {
   UserModel.find((err, user) => {
@@ -43,7 +52,11 @@ router.post("/login", (req, res, next) => {
           status: 400,
         });
       }
-      res.json(user);
+      const token = generateToken(user)
+      res.json({
+        user,
+        token
+      });
     })
     .catch((err) => {
       return json(err);
