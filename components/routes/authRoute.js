@@ -59,7 +59,7 @@ router.post("/login", (req, res, next) => {
       });
     })
     .catch((err) => {
-      return json(err);
+      return next(err);
     });
 });
 

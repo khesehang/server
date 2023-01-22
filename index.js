@@ -1,11 +1,14 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
 
 const app = express()
 require('./db.initialize')
 require('dotenv').config()
 
+
 app.use(morgan('dev'))
+app.use(cors())
 
 const ApiRoutes = require('./apiRoutes')
 
