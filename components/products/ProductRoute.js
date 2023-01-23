@@ -1,14 +1,14 @@
 const router = require('express').Router();
-const { protect } = require('../../middlewares/authorize');
+const authorization = require('../../middlewares/authorize');
 const ProductCtrl = require('./ProductController')
 
 router.route('/')
-    .get(protect, ProductCtrl.get)
-    .post(protect, ProductCtrl.post)
+    .get(authorization, ProductCtrl.get)
+    .post(authorization, ProductCtrl.post)
 
 router.route('/:id')
-    .get(protect, ProductCtrl.getById)
-    .put(protect, ProductCtrl.update)
-    .delete(protect, ProductCtrl.remove)
+    .get(authorization, ProductCtrl.getById)
+    .put(authorization, ProductCtrl.update)
+    .delete(authorization, ProductCtrl.remove)
 
 module.exports = router;

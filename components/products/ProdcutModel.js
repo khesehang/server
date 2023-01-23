@@ -26,7 +26,7 @@ const ProductSchema = new Schema({
     },
     description: String,
     category: {
-        type: String,
+        type: [String],
         required: true,
     },
     brand: String,
@@ -54,11 +54,11 @@ const ProductSchema = new Schema({
         },
         discountValue: String,
     },
-    color: String,
+    color: {type:[String], trim: true},
     isReturnEligible: Boolean,
     offers: [String],
     tags: [String], // Flashed sales, featured
-    manuDate: Data,
+    manuDate: Date,
     expiryDate: Date,
     salesDate: Date,
     purchaseDate: Date,

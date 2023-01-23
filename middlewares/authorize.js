@@ -1,21 +1,45 @@
-const jwt = require('jsonwebtoken')
-const userModel = require('../components/modules/userModel')
+const JWT = require('jsonwebtoken');
+const UserModel = require('../components/modules/userModel');
+const config = require('../components/configs/index')
 
-const protect = async (req, res, next) => {
+module.exports = function (req, res, next) {
     let token;
-    if (res.headers.authorization &&
-        res.headers.authorization.startswith('Bearer ')) {
-        try {
-            token = req.headers.authorization.split(' ')[1]
+    if (req.headers['authorization'])
+        token = req.headers['authorization']
+    if (req.headers['x-access-token'])
+        token = req.headers['x-access-token']
+    if (req.headers['token'])
+        token = req.headers['token']
+    if (req.query.token)
+        token = req.query.token;
 
-            const decoded = jwt.verify(token, process.env.JWT_SECRET)
-            res.user = await userModel.findById(decoded.id).select('-password')
-            next()
-        } catch (error) {
-            return enxt('Not Authorized, Token failed')
-        }
+    if (!token) {
+        return next({
+            msg: 'Authorization Failed,Token Not Provided',
+            status: 401
+        })
     }
-    if (!token) return next('Not Authorized, Token not found')
-}
+    console.log('tokne is>>>',token)
+    // if token exist proceed with verification
+    JWT.verify(token, config.JWT_SECRET, function (err, decoded) {
+        if (err) {
+            console.log('error in jwt',err)
+            return next(err);
+        }
+        console.log('token verification successfull >>', decoded)
+        UserModel.findById(decoded._id, function (err, user) {
+            if (err) {
+                return next(err);
+            }
+            if (!user) {
+                return next({
+                    msg: 'User removed from system',
+                    status: 400
+                })
+            }
+            req.user = user;;
+            next();
+        })
 
-module.exports = { protect }
+    })
+}

@@ -14,6 +14,7 @@ function generateToken(data) {
 }
 
 router.get("/", (req, res, next) => {
+  console.log('get in user')
   UserModel.find((err, user) => {
     if (err) return next(err);
     res.json(user);
@@ -34,6 +35,7 @@ router.post("/register", (req, res, next) => {
 
 router.post("/login", (req, res, next) => {
   const data = req.body;
+  console.log('user login ', data)
   UserModel.findOne({
     $or: [{ username: data.username }, { email: data.username }],
   })

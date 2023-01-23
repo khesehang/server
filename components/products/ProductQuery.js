@@ -6,7 +6,7 @@ function map_product_req(product, productData) {
     if (productData.description)
         product.description = productData.description
     if (productData.category)
-        product.category = productData.category
+        product.category = productData.category.split(',')
     if (productData.brand)
         product.brand = productData.brand
     if (productData.size)
@@ -26,7 +26,7 @@ function map_product_req(product, productData) {
     if (productData.warrentyStatus)
         product.warrentyStatus = productData.warrentyStatus
     if (productData.color)
-        product.color = productData.color
+        product.color = productData.color.split(',')
     if (productData.isreturnEligible)
         product.isreturnEligible = productData.isreturnEligible
     if (productData.manuDate)
@@ -56,21 +56,30 @@ function map_product_req(product, productData) {
 }
 
 function find(condition, params = {}) {
-    const perPage = params.perSize ? Number(params.pageSize) : 1000;
-    const currentPage = Number(params.pageNumber) || 1
-    const skipCount = perPage * (currentPage - 1)
+    // const perPage = params.perSize ? Number(params.pageSize) : 1000;
+    // const currentPage = Number(params.pageNumber) || 1
+    // const skipCount = perPage * (currentPage - 1)
+    // return new Promise((resolve, reject) => {
 
-    return ProductModel.find(condition)
-        .skip(skipCount)
-        .limit(perPage)
-        .sort({ _id: -1 })
-        .populate('vendor', {
-            username: 1
-        })
-        .populate('reviews.user', {
-            username: 1
-        })
-        .exec()
+        return ProductModel.find(condition)
+            // .skip(skipCount)
+            // .limit(perPage)
+            .sort({ _id: -1 })
+            // .populate('vendor', {
+            //     username: 1
+            // })
+            // .populate('reviews.user', {
+            //     username: 1
+            // })
+            .exec()
+            // .then(product => {
+            //     console.log('respnse in rpodnkljas')
+            //     resolve(product)
+            // })
+            // .catch(err => {
+            //     return reject(err)
+            // })
+    // })
 }
 
 function insert(data) {
@@ -91,8 +100,10 @@ function update(id, data) {
                     status: 400
                 })
             }
+            map_product_req(product, data)
             product.save((err, updated) => {
                 if (err) return reject(err)
+                console.log('update success')
                 resolve(updated)
             })
         })
@@ -107,7 +118,7 @@ function remove(id) {
                 msg: 'Product Not Found',
                 status: 400
             })
-            product.remvoe((err, removed) => {
+            product.remove((err, removed) => {
                 if (err) return reject(err)
                 resolve(removed)
             })
