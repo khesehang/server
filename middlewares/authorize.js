@@ -19,14 +19,16 @@ module.exports = function (req, res, next) {
             status: 401
         })
     }
-    console.log('tokne is>>>',token)
+    // console.log('tokne is>>>',token)
+    const Token = token.split(' ')[1]
     // if token exist proceed with verification
-    JWT.verify(token, config.JWT_SECRET, function (err, decoded) {
+    // JWT.verify(Token, config.JWT_SECRET, function (err, decoded) {
+    JWT.verify(Token, config.JWT_SECRET, function (err, decoded) {
         if (err) {
             console.log('error in jwt',err)
             return next(err);
         }
-        console.log('token verification successfull >>', decoded)
+        // console.log('token verification successfull >>', decoded)
         UserModel.findById(decoded._id, function (err, user) {
             if (err) {
                 return next(err);

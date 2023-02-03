@@ -25,6 +25,8 @@ function map_product_req(product, productData) {
         product.vendor = productData.vendor
     if (productData.warrentyStatus)
         product.warrentyStatus = productData.warrentyStatus
+    if (productData.warrentyPeriod)
+        product.warrentyPeriod = productData.warrentyPeriod
     if (productData.color)
         product.color = productData.color.split(',')
     if (productData.isreturnEligible)
@@ -61,28 +63,29 @@ function find(condition, params = {}) {
     // const skipCount = perPage * (currentPage - 1)
     // return new Promise((resolve, reject) => {
 
-        return ProductModel.find(condition)
-            // .skip(skipCount)
-            // .limit(perPage)
-            .sort({ _id: -1 })
-            // .populate('vendor', {
-            //     username: 1
-            // })
-            // .populate('reviews.user', {
-            //     username: 1
-            // })
-            .exec()
-            // .then(product => {
-            //     console.log('respnse in rpodnkljas')
-            //     resolve(product)
-            // })
-            // .catch(err => {
-            //     return reject(err)
-            // })
+    return ProductModel.find(condition)
+        // .skip(skipCount)
+        // .limit(perPage)
+        .sort({ _id: -1 })
+        // .populate('vendor', {
+        //     username: 1
+        // })
+        // .populate('reviews.user', {
+        //     username: 1
+        // })
+        .exec()
+    // .then(product => {
+    //     console.log('respnse in rpodnkljas')
+    //     resolve(product)
+    // })
+    // .catch(err => {
+    //     return reject(err)
+    // })
     // })
 }
 
 function insert(data) {
+    console.log('data in post data is',data)
     const newProduct = new ProductModel({})
     map_product_req(newProduct, data)
     return newProduct.save()
@@ -100,6 +103,11 @@ function update(id, data) {
                     status: 400
                 })
             }
+            let oldUpdatedImages = [];
+            if (data.filesToRemove && data.filesToRemove.length) {
+                oldUpdatedImages = remove_existing_images(product.image, data.filesToRemove)
+            }
+
             map_product_req(product, data)
             product.save((err, updated) => {
                 if (err) return reject(err)
@@ -108,6 +116,16 @@ function update(id, data) {
             })
         })
     })
+}
+
+function remove_existing_images(oldImages = [], filesToRemove = []) {
+    let existingImagesCopy = [...oldImages]
+    oldImages.forEach((image, index) => {
+        if (filesToRemove.includes(image)) {
+            existingImagesCopy.splice(index, 1)
+        }
+    })
+    return existingImagesCopy;
 }
 
 function remove(id) {

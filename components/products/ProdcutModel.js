@@ -34,6 +34,7 @@ const ProductSchema = new Schema({
     images: [String],
     price: Number,
     quantity: Number,
+    color: {type:[String], trim: true},
     status: {
         type: String,
         enum: ['out of stock', 'available', 'booked'],
@@ -45,7 +46,7 @@ const ProductSchema = new Schema({
         ref: 'user'
     },
     warrentyStatus: Boolean,
-    warrentyeriod: String,
+    warrentyPeriod: String,
     discount: {
         discountedItem: Boolean,
         discountType: {
@@ -54,7 +55,6 @@ const ProductSchema = new Schema({
         },
         discountValue: String,
     },
-    color: {type:[String], trim: true},
     isReturnEligible: Boolean,
     offers: [String],
     tags: [String], // Flashed sales, featured
